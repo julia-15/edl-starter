@@ -220,9 +220,30 @@ async def update_task(task_id: int, updates: TaskUpdate) -> Task:
     - updates.model_dump(exclude_unset=True) renvoie un dictionnaire contenant
       uniquement les champs envoyés, par exemple {"status": "done"}.
     """
-    # TODO: Votre code ici
-    raise HTTPException(status_code=501, detail="Update not implemented yet - complete this function!")
+     # 1. Vérifier que la tâche existe (comme dans get_task)
+    if task_id not in tasks_db:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
 
+    # 2. Récupérer la tâche actuelle et les champs envoyés par le client
+    existing = tasks_db[task_id]
+    changes = updates.model_dump(exclude_unset=True)
+
+    # 3. Construire la tâche mise à jour (comme dans create_task)
+    updated_task = Task(
+        id=existing.id,
+        title=changes.get("title", existing.title),
+        description=changes.get("description", existing.description),
+        status=changes.get("status", existing.status),
+        priority=changes.get("priority", existing.priority),
+        assignee=changes.get("assignee", existing.assignee),
+        due_date=changes.get("due_date", existing.due_date),
+        created_at=existing.created_at,
+        updated_at=datetime.now(timezone.utc),
+    )
+
+    # 4. Sauvegarder et renvoyer la tâche
+    tasks_db[task_id] = updated_task
+    return updated_task
 
 @app.delete("/tasks/{task_id}", status_code=204)
 async def delete_task(task_id: int):
@@ -237,9 +258,11 @@ async def delete_task(task_id: int):
 
     Indice : get_task(), plus haut dans ce fichier, vérifie déjà si une tâche existe.
     """
-    # TODO: Votre code ici
-    raise HTTPException(status_code=501, detail="Delete not implemented yet - complete this function!")
 
+    if task_id not in tasks_db:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+
+    del tasks_db[task_id]
 
 if __name__ == "__main__":  # pragma: no cover (lancement manuel, pas testé)
     import uvicorn
