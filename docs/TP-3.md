@@ -498,6 +498,11 @@ def client(setup_test_database):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+
+
+def pytest_configure(config):
+    """Enregistre le marker e2e du TP 2 (exercice 6)."""
+    config.addinivalue_line("markers", "e2e: mark test as end-to-end test (slow)")
 ```
 
 > 💡 **`dependency_overrides`** permet de remplacer `get_db` par une version qui utilise la base de test au lieu de la vraie base.
@@ -523,9 +528,9 @@ Créer une base PostgreSQL gratuite sur Supabase, puis vérifier **en local** qu
 
 1. Allez sur <https://supabase.com> → **"Start your project"** → inscrivez-vous avec **GitHub**
 2. Cliquez **"New project"** et configurez :
-   - **Name** : `taskflow`
-   - **Database Password** : un mot de passe composé **uniquement de lettres et de chiffres** (⚠️ **notez-le !**)
-   - **Region** : `West EU (Ireland)`
+    - **Name** : `taskflow`
+    - **Database Password** : un mot de passe composé **uniquement de lettres et de chiffres** (⚠️ **notez-le !**)
+    - **Region** : `West EU (Ireland)`
 3. Cliquez **"Create new project"** et attendez 1-2 minutes
 
 > ⚠️ **Pourquoi seulement des lettres et des chiffres ?** Le mot de passe va être placé dans une URL. Les caractères comme `@ # / : ? %` ont un sens spécial dans une URL et cassent la connexion.
@@ -536,11 +541,11 @@ Créer une base PostgreSQL gratuite sur Supabase, puis vérifier **en local** qu
 
 1. Cliquez sur le bouton **"Connect"** en haut de la page
 
-   ![Supabase Connect](img/connect.png)
+    ![Supabase Connect](img/connect.png)
 
 2. Dans l'onglet **Connection String** :
-   - **Type** : `URI`
-   - **Method** : `Session pooler` (⚠️ pas "Direct connection")
+    - **Type** : `URI`
+    - **Method** : `Session pooler` (⚠️ pas "Direct connection")
 3. Copiez l'URL et remplacez `[YOUR-PASSWORD]` par votre mot de passe (sans les crochets)
 
 L'URL ressemble à :
@@ -612,11 +617,11 @@ Recopiez ce tableau dans un fichier texte et complétez-le au fur et à mesure :
 1. Vos tests passent en local (`uv run pytest`) et votre CI du TP 2 est verte sur `main`
 2. Poussez votre travail (y compris `pyproject.toml` et `uv.lock`, modifiés par `uv add`) :
 
-   ```bash
-   git add .
-   git commit -m "feat: migrate to PostgreSQL with SQLAlchemy"
-   git push origin main
-   ```
+    ```bash
+    git add .
+    git commit -m "feat: migrate to PostgreSQL with SQLAlchemy"
+    git push origin main
+    ```
 
 3. Créez un compte sur <https://render.com> avec **GitHub** et autorisez l'accès à votre repository
 
@@ -625,24 +630,24 @@ Recopiez ce tableau dans un fichier texte et complétez-le au fur et à mesure :
 1. Sur le Dashboard Render : **"New +"** → **"Web Service"** → choisissez votre repository
 2. Configurez :
 
-   | Paramètre | Valeur |
-   |-----------|--------|
-   | **Name** | `taskflow-backend` |
-   | **Region** | `Frankfurt (EU Central)` |
-   | **Branch** | `main` |
-   | **Root Directory** | `backend` |
-   | **Runtime** | `Python 3` |
-   | **Build Command** | `pip install uv && uv sync` |
-   | **Start Command** | `uv run uvicorn src.app:app --host 0.0.0.0 --port $PORT` |
-   | **Instance Type** | `Free` |
+    | Paramètre | Valeur |
+    |-----------|--------|
+    | **Name** | `taskflow-backend` |
+    | **Region** | `Frankfurt (EU Central)` |
+    | **Branch** | `main` |
+    | **Root Directory** | `backend` |
+    | **Runtime** | `Python 3` |
+    | **Build Command** | `pip install uv && uv sync` |
+    | **Start Command** | `uv run uvicorn src.app:app --host 0.0.0.0 --port $PORT` |
+    | **Instance Type** | `Free` |
 
-   > 💡 Laissez `$PORT` tel quel : Render le remplace lui-même.
+    > 💡 Laissez `$PORT` tel quel : Render le remplace lui-même.
 
 3. Dans **Environment Variables**, ajoutez **une seule** variable pour l'instant :
 
-   | Name | Value |
-   |------|-------|
-   | `DATABASE_URL` | Votre URL Supabase (exercice 6) |
+    | Name | Value |
+    |------|-------|
+    | `DATABASE_URL` | Votre URL Supabase (exercice 6) |
 
 4. Cliquez **"Create Web Service"** et suivez les logs. Attendez le statut **Live** (3-5 min).
 5. Copiez l'**URL du backend** affichée en haut de la page (ex : `https://taskflow-backend-x7k2.onrender.com`) dans votre tableau.
@@ -653,19 +658,19 @@ Recopiez ce tableau dans un fichier texte et complétez-le au fur et à mesure :
 1. **"New +"** → **"Static Site"** → même repository
 2. Configurez :
 
-   | Paramètre | Valeur |
-   |-----------|--------|
-   | **Name** | `taskflow-frontend` |
-   | **Branch** | `main` |
-   | **Root Directory** | `frontend` |
-   | **Build Command** | `npm ci && npm run build` |
-   | **Publish Directory** | `dist` |
+    | Paramètre | Valeur |
+    |-----------|--------|
+    | **Name** | `taskflow-frontend` |
+    | **Branch** | `main` |
+    | **Root Directory** | `frontend` |
+    | **Build Command** | `npm ci && npm run build` |
+    | **Publish Directory** | `dist` |
 
 3. Dans **Environment Variables**, ajoutez :
 
-   | Name | Value |
-   |------|-------|
-   | `VITE_API_URL` | **Votre** URL du backend (étape 1) |
+    | Name | Value |
+    |------|-------|
+    | `VITE_API_URL` | **Votre** URL du backend (étape 1) |
 
 4. Cliquez **"Create Static Site"**, attendez **Live**, puis copiez l'**URL du frontend** dans votre tableau.
 
@@ -677,9 +682,9 @@ Par sécurité, le navigateur refuse qu'une page d'un site (le frontend) appelle
 
 1. Dashboard → **taskflow-backend** → **Environment** → ajoutez :
 
-   | Name | Value |
-   |------|-------|
-   | `CORS_ORIGINS` | **Votre** URL du frontend (étape 2) |
+    | Name | Value |
+    |------|-------|
+    | `CORS_ORIGINS` | **Votre** URL du frontend (étape 2) |
 
 2. **"Save Changes"** → le backend redémarre automatiquement.
 
@@ -701,21 +706,21 @@ Vérifier que tout fonctionne en production et que les données sont bien persis
 
 1. **Testez l'API** (remplacez `<URL_BACKEND>` par votre URL du backend) :
 
-   ```bash
-   curl <URL_BACKEND>/health
-   ```
+    ```bash
+    curl <URL_BACKEND>/health
+    ```
 
-   Résultat attendu :
+    Résultat attendu :
 
-   ```json
-   {"status": "healthy", "database": "connected", "tasks_count": 0}
-   ```
+    ```json
+    {"status": "healthy", "database": "connected", "tasks_count": 0}
+    ```
 
 2. **Testez le frontend** : créez, modifiez et supprimez quelques tâches.
 3. **Vérifiez la persistance** :
-   - Dans Supabase → **Table Editor** → `tasks` : vos tâches sont là
-   - Sur Render → **taskflow-backend** → **Manual Deploy** → **Restart service**
-   - Rechargez le frontend : vos tâches sont **toujours là** (contrairement au TP 1-2 où elles disparaissaient au redémarrage)
+    - Dans Supabase → **Table Editor** → `tasks` : vos tâches sont là
+    - Sur Render → **taskflow-backend** → **Manual Deploy** → **Restart service**
+    - Rechargez le frontend : vos tâches sont **toujours là** (contrairement au TP 1-2 où elles disparaissaient au redémarrage)
 
 ---
 
@@ -730,21 +735,21 @@ Faire en sorte que chaque push sur `main` soit **testé par GitHub Actions (TP 2
 1. Sur Render → **taskflow-backend** → **Settings** → **Auto-Deploy** : choisissez **"After CI Checks Pass"**. Faites de même pour **taskflow-frontend**.
 2. Modifiez le message de bienvenue dans `backend/src/app.py` :
 
-   ```python
-   "message": "Welcome to TaskFlow API - déployé automatiquement !",
-   ```
+    ```python
+    "message": "Welcome to TaskFlow API - déployé automatiquement !",
+    ```
 
 3. Adaptez le test `test_root_endpoint` si nécessaire, vérifiez en local (`uv run pytest`), puis poussez :
 
-   ```bash
-   git add .
-   git commit -m "feat: update welcome message"
-   git push origin main
-   ```
+    ```bash
+    git add .
+    git commit -m "feat: update welcome message"
+    git push origin main
+    ```
 
 4. Observez :
-   - GitHub → **Actions** : vos workflows tournent
-   - Render → **Events** : le déploiement démarre **après** que les checks soient verts
+    - GitHub → **Actions** : vos workflows tournent
+    - Render → **Events** : le déploiement démarre **après** que les checks soient verts
 5. Vérifiez avec `curl <URL_BACKEND>/` : le nouveau message apparaît.
 
 > 💡 **Testez le cas contraire :** poussez un test qui échoue. La CI devient rouge et Render **ne déploie pas**. La production reste protégée.
