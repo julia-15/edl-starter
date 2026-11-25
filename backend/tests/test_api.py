@@ -9,6 +9,9 @@ Structure de chaque test :
 3. ASSERT - Vérifier la réponse
 """
 
+from urllib import response
+from xmlrpc import client
+
 import pytest
 
 
@@ -34,11 +37,9 @@ def test_root_endpoint(client):
 
 
 def test_health_check(client):
-    """EXEMPLE : Un autre test de point de terminaison GET simple."""
     response = client.get("/health")
-
     assert response.status_code == 200
-    assert response.json()["status"] == "healthy"
+    assert response.json()["status"] == "healthy" # ✅ Correct
 
 def test_create_task(client):
     """
