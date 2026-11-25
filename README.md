@@ -1,5 +1,8 @@
 # 🚀 EDL Starter - Code de Démarrage
 
+# TaskFlow API
+![CI Pipeline](https://github.com/julia-15/edl-starter/actions/workflows/ci-pipeline.yml/badge.svg)
+
 Bienvenue dans le code de démarrage pour les ateliers d'Environnement de Développement Logiciel (EDL) !
 
 ## 📦 Contenu
@@ -294,3 +297,4 @@ Dans le TP 3, vous allez :
 **Bon courage pour les travaux pratiques ! 🚀**
 
 Version: 1.0 - EDL 2024-2025
+
